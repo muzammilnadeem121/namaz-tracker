@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Namaz Tracker — Download</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="shortcut icon" href="app_icon.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal-deep:   #084F4F;
+      --teal:        #0D6E6E;
+      --teal-light:  #1A9E9E;
+      --gold:        #D4A843;
+      --gold-light:  #FFD166;
+      --bg:          #07111F;
+      --card:        #0E1E2F;
+      --card2:       #112240;
+      --text:        #F0F4F8;
+      --muted:       rgba(240,244,248,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background ── */
+    .bg-mesh {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%,   rgba(13,110,110,.35) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 100%,  rgba(8,79,79,.4)  0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%,   rgba(212,168,67,.06) 0%, transparent 70%);
+    }
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,.2)  0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,.3)  0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,.25) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 85%, rgba(255,255,255,.2)  0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 35%, rgba(255,255,255,.15) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,.2)  0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,.3)  0%, transparent 100%);
+    }
+
+    /* ── Layout ── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 24px 80px;
+      gap: 0;
+    }
+
+    /* ── Icon ── */
+    .app-icon {
+      width: 120px; height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+      animation: float 4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .app-icon svg { width: 72px; height: 72px; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── Heading ── */
+    .app-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+      text-align: center;
+      background: linear-gradient(135deg, #fff 30%, var(--teal-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .tagline {
+      font-size: .95rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+
+    /* ── Feature pills ── */
+    .features {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .pill {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+      letter-spacing: .03em;
+    }
+    .pill-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Download card ── */
+    .card {
+      width: 100%; max-width: 460px;
+      background: var(--card);
+      border: 1px solid rgba(26,158,158,.2);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04) inset;
+      margin-bottom: 32px;
+    }
+
+    .card-label {
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .apk-info {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px;
+      background: rgba(13,110,110,.12);
+      border: 1px solid rgba(13,110,110,.25);
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+    .apk-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .apk-meta { flex: 1; min-width: 0; }
+    .apk-filename {
+      font-weight: 800; font-size: .9rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    .apk-details { font-size: .75rem; color: var(--muted); font-weight: 600; }
+
+    /* ── Download button ── */
+    .btn-download {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%;
+      padding: 18px 24px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal) 50%, var(--teal-light) 100%);
+      box-shadow: 0 8px 32px rgba(13,110,110,.45), 0 0 0 1px rgba(26,158,158,.3) inset;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-download::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+      border-radius: inherit;
+    }
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(13,110,110,.6), 0 0 0 1px rgba(26,158,158,.4) inset;
+      filter: brightness(1.08);
+    }
+    .btn-download:active { transform: translateY(0); }
+
+    .btn-download svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+    /* ── Warning notice ── */
+    .notice {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(212,168,67,.08);
+      border: 1px solid rgba(212,168,67,.2);
+      margin-top: 20px;
+    }
+    .notice-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .notice p { font-size: .78rem; color: rgba(212,168,67,.85); font-weight: 600; line-height: 1.5; }
+    .notice strong { color: var(--gold); }
+
+    /* ── Steps ── */
+    .steps-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+    .steps {
+      width: 100%; max-width: 460px;
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 48px;
+    }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+    }
+    .step-num {
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 800; color: #fff;
+    }
+    .step-text { font-size: .85rem; color: var(--muted); font-weight: 600; line-height: 1.5; }
+    .step-text strong { color: var(--text); }
+
+    /* ── Footer ── */
+    footer {
+      font-size: .75rem;
+      color: rgba(255,255,255,.2);
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-align: center;
+    }
+    footer span { color: var(--teal-light); }
+
+    /* ── Crescent decoration ── */
+    .deco {
+      position: fixed; top: -60px; right: -60px; z-index: 0;
+      width: 300px; height: 300px; border-radius: 50%;
+      border: 1px solid rgba(13,110,110,.15);
+      pointer-events: none;
+    }
+    .deco::after {
+      content: '';
+      position: absolute; top: 30px; left: 30px; right: -10px; bottom: -10px;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <div class="stars"></div>
+  <div class="deco"></div>
+
+  <div class="page">
+
+    <!-- Icon -->
+    <div class="app-icon">
+        <img src="app_icon.png" style="height: 100%;width: 100%;" alt="app_icon">
+    </div>
+
+    <h1 class="app-name">Namaz Tracker</h1>
+    <p class="tagline">Track · Remember · Grow</p>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="pill"><span class="pill-dot" style="background:#4CAF50"></span>Prayer Reminders</div>
+      <div class="pill"><span class="pill-dot" style="background:#D4A843"></span>Al-Adhan Prayer Times</div>
+      <div class="pill"><span class="pill-dot" style="background:#0D6E6E"></span>History & Stats</div>
+      <div class="pill"><span class="pill-dot" style="background:#6B48FF"></span>Dark Mode</div>
+      <div class="pill"><span class="pill-dot" style="background:#E91E8C"></span>Admin Dashboard</div>
+    </div>
+
+    <!-- Download card -->
+    <div class="card">
+      <div class="card-label">🕌 &nbsp;Android APK · v1.0.0</div>
+
+      <div class="apk-info">
+        <div class="apk-icon">📦</div>
+        <div class="apk-meta">
+          <div class="apk-filename">namaz_tracker_v1.0.0.apk</div>
+          <div class="apk-details">Android 5.0+ &nbsp;·&nbsp; Debug build &nbsp;·&nbsp; ~53 MB</div>
+        </div>
+      </div>
+
+      <!--
+        ╔══════════════════════════════════════════════════════╗
+        ║  REPLACE THE href BELOW WITH YOUR REAL APK PATH     ║
+        ║                                                      ║
+        ║  After building:                                     ║
+        ║    flutter build apk --debug                         ║
+        ║  The APK is at:                                      ║
+        ║    build/app/outputs/flutter-apk/app-debug.apk      ║
+        ║                                                      ║
+        ║  For release:                                        ║
+        ║    flutter build apk --release                       ║
+        ║    build/app/outputs/flutter-apk/app-release.apk    ║
+        ╚══════════════════════════════════════════════════════╝
+      -->
+      <a class="btn-download" href="https://drive.google.com/file/d/1gUPI1U9rB7cp_Ig2YvEgDjSSKyy7si4F/view?usp=drive_link" download="namaz_tracker_v1.0.0.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download APK
+      </a>
+
+      <div class="notice">
+        <span class="notice-icon">⚠️</span>
+        <p><strong>Allow unknown sources.</strong> Go to <strong>Settings → Security → Install unknown apps</strong> and enable it for your browser or file manager before installing.</p>
+      </div>
+    </div>
+
+    <!-- Install steps -->
+    <p class="steps-title">How to install</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Tap <strong>Download APK</strong> above and wait for the download to finish.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Open your notification shade and tap the downloaded file, or find it in <strong>Downloads</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">If prompted, go to <strong>Settings → Security</strong> and enable <strong>Install unknown apps</strong> for your browser.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Tap <strong>Install</strong> and allow the permissions requested (location for prayer times, notifications for reminders).</div>
+      </div>
+    </div>
+
+    <footer>Built with Flutter &nbsp;·&nbsp; Powered by <span>Al-Adhan API</span> &nbsp;·&nbsp; Namaz Tracker v1.0.0</footer>
+
+  </div>
+</body>
+</html>
